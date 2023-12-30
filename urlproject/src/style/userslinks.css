@@ -1,0 +1,45 @@
+.bookmark-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .bookmark-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .bookmark-header {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-decoration: underline;
+  }
+  
+  .bookmark-content {
+    font-size: 14px;
+  }
+  
+  .bookmark-content p {
+    margin-bottom: 10px;
+  }
+  
+  .bookmark-content div {
+    margin-bottom: 5px;
+  }
+  
+  .bookmark-content a {
+    text-decoration: none;
+    color: #007BFF;
+    word-break: break-all; /* To prevent long URLs from breaking layout */
+  }
+  
+  .bookmark-content a:hover {
+    text-decoration: underline;
+  }
+.list{
+    padding-left: 20px;
+}  

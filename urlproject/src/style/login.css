@@ -1,0 +1,47 @@
+.ap{
+    background-image: url(/src/image/597010.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    min-height: 100vh;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.otp{
+    padding: 7px 15px;
+    margin-top: 15px;
+    text-align: center;
+
+
+    background-color:antiquewhite;
+}
+
+.welcome{
+    text-decoration: underline;
+    color:white;
+    text-decoration-color:whitesmoke;
+    
+}
+.verify{
+    padding: 7px 15px;
+    margin-top: 15px;
+    text-align: center;
+
+
+    background-color:antiquewhite;
+
+}
+.Enterotp{
+    text-decoration: underline;
+    color: aliceblue;
+    text-decoration-color: aliceblue;
+}
+.icon{
+    color:blanchedalmond;
+}
+.phonelabel{
+    color:aliceblue
+}
