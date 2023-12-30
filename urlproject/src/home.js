@@ -10,8 +10,6 @@ function Home() {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
   const [description, setDescription] = useState("");
-  const [savedUrls, setSavedUrls] = useState([]);
-  const [isSaved, setIsSaved] = useState(false);
   const navigate = useNavigate();
 
   const handleUrlChange = (event) => {
@@ -36,7 +34,23 @@ function Home() {
         alert("Please enter a URL before submitting.");
         return;
       }
-
+  
+      // Check if the link already exists in the database
+      const linkExistsResponse = await axios.post("http://localhost:6002/check-link-exists", {
+        link: originalUrl,
+      });
+  
+      if (linkExistsResponse.data.exists) {
+        const confirmSubmit = window.confirm(
+          "This link already exists. Do you want to submit it anyway?"
+        );
+  
+        if (!confirmSubmit) {
+          // User chose not to submit the link
+          return;
+        }
+      }
+  
       // Generate short URL
       const generatedShortUrl = shortid.generate({
         length: 10,
@@ -45,7 +59,7 @@ function Home() {
       const truncatedShortUrl = generatedShortUrl.substring(0, 6);
       const fullShortUrl = `http://localhost:6002/u/${truncatedShortUrl}`;
       setShortUrl(fullShortUrl);
-
+  
       // Post data to server
       await axios.post("http://localhost:6002/url", {
         link: originalUrl,

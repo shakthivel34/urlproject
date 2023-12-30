@@ -137,13 +137,24 @@ app.get('/saved', async (req, res) => {
 //     res.status(500).json({ error: 'Internal Server Error' });
 //   }
 // });
+app.post('/check-link-exists', async (req, res) => {
+  const { link } = req.body;
+
+  try {
+    const result = await db.query('SELECT * FROM links WHERE link = $1 AND is_active = true', [link]);
+
+    if (result.rows.length > 0) {
+      // Link already exists in the database
+      res.json({ exists: true, linkData: result.rows[0] });
+    } else {
+      // Link does not exist in the database
+      res.json({ exists: false });
+    }
+  } catch (error) {
+    console.error('Error checking link existence in the database:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 
-
-
-
-
-
-
-  
