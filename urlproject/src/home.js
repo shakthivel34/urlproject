@@ -21,6 +21,34 @@ function Home() {
   const handleTagsChange = (event) => {
     setTags(event.target.value);
   };
+  const fetchUrlInfo = async () => {
+    try {
+      if (!originalUrl.trim()) {
+        alert("Please enter a URL before fetching info.");
+        return;
+      }
+
+      // Extract information from the link
+      const extractInfoResponse = await axios.post("http://localhost:6002/extract-info", {
+        link: originalUrl,
+      });
+
+      // Update state with extracted title and description
+      setTitle(extractInfoResponse.data.title || "");
+      setDescription(extractInfoResponse.data.description || "");
+    } catch (error) {
+      console.error("Error fetching URL info:", error);
+      // Handle error in a way that makes sense for your application
+    }
+  };
+  const handleTitleChange = (event) => {
+    setTitle(event.target.value);
+  };
+
+  const handleDescriptionChange = (event) => {
+    setDescription(event.target.value);
+  };
+
 
  
 
@@ -46,15 +74,8 @@ function Home() {
           return;
         }
       }
-  
-      // Extract information from the link
-      const extractInfoResponse = await axios.post("http://localhost:6002/extract-info", {
-        link: originalUrl,
-      });
-  
-      // Update state with extracted title and description
-      setTitle(extractInfoResponse.data.title || "");
-      setDescription(extractInfoResponse.data.description || "");
+     
+      
   
       // Generate short URL
       const generatedShortUrl = shortid.generate({
@@ -69,9 +90,9 @@ function Home() {
       await axios.post("http://localhost:6002/url", {
         link: originalUrl,
         short_link: truncatedShortUrl,
-        title:extractInfoResponse.data.title,
+        title,
         tags,
-        description:extractInfoResponse.data.description,
+        description,
       });
       navigate("/users");
     } catch (error) {
@@ -114,6 +135,9 @@ function Home() {
           onChange={handleUrlChange}
           placeholder="https://example.com"
         />
+        <button className="button" onClick={fetchUrlInfo}>
+          <b className="submit">Fetch Info</b>
+          </button>
       </div>
 
       <div className="title">
@@ -125,7 +149,7 @@ function Home() {
           type="text"
           id="titleInput"
           value={title}
-          readOnly
+          onChange={handleTitleChange}
           placeholder="Enter the title"
         />
       </div>
@@ -152,7 +176,7 @@ function Home() {
           className="descriptionbox"
           id="descriptionInput"
           value={description}
-          readOnly
+          onChange={handleDescriptionChange}
           placeholder="Enter a description"
         />
       </div>
