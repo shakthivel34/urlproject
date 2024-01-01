@@ -5,6 +5,8 @@ const app = express();
 const port = 6002;
 const db = require('./db');
 const cors = require('cors');
+const cheerio = require('cheerio');
+const axios = require('axios');
 app.use(cors());
 
 app.use(express.json());
@@ -156,5 +158,22 @@ app.post('/check-link-exists', async (req, res) => {
   }
 });
 
+app.post('/extract-info', async (req, res) => {
+  const { link } = req.body;
+
+  try {
+    const response = await axios.get(link);
+    const html = response.data;
+    const $ = cheerio.load(html);
+
+    const title = $('head title').text();
+    const description = $('meta[name="description"]').attr('content') || $('meta[property="og:description"]').attr('content') || '';
+
+    res.json({ title, description });
+  } catch (error) {
+    console.error('Error extracting information from the link:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 

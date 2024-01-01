@@ -16,17 +16,13 @@ function Home() {
     setOriginalUrl(event.target.value);
   };
 
-  const handleTitleChange = (event) => {
-    setTitle(event.target.value);
-  };
+  
 
   const handleTagsChange = (event) => {
     setTags(event.target.value);
   };
 
-  const handleDescriptionChange = (event) => {
-    setDescription(event.target.value);
-  };
+ 
 
   const handleSubmit = async () => {
     try {
@@ -51,6 +47,15 @@ function Home() {
         }
       }
   
+      // Extract information from the link
+      const extractInfoResponse = await axios.post("http://localhost:6002/extract-info", {
+        link: originalUrl,
+      });
+  
+      // Update state with extracted title and description
+      setTitle(extractInfoResponse.data.title || "");
+      setDescription(extractInfoResponse.data.description || "");
+  
       // Generate short URL
       const generatedShortUrl = shortid.generate({
         length: 10,
@@ -64,9 +69,9 @@ function Home() {
       await axios.post("http://localhost:6002/url", {
         link: originalUrl,
         short_link: truncatedShortUrl,
-        title,
+        title:extractInfoResponse.data.title,
         tags,
-        description,
+        description:extractInfoResponse.data.description,
       });
       navigate("/users");
     } catch (error) {
@@ -74,6 +79,7 @@ function Home() {
       // Handle error in a way that makes sense for your application
     }
   };
+  
 
   const navigateToUsersLinks = async () => {
     try {
@@ -119,7 +125,7 @@ function Home() {
           type="text"
           id="titleInput"
           value={title}
-          onChange={handleTitleChange}
+          readOnly
           placeholder="Enter the title"
         />
       </div>
@@ -146,7 +152,7 @@ function Home() {
           className="descriptionbox"
           id="descriptionInput"
           value={description}
-          onChange={handleDescriptionChange}
+          readOnly
           placeholder="Enter a description"
         />
       </div>
