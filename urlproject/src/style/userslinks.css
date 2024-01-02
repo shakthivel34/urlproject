@@ -64,3 +64,32 @@
 .pagination button.active {
   background-color: #2980b9;
 }
+
+.bookmark-card {
+  position: relative;
+}
+
+.bookmark-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-button-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 8px;
+}
+
+.edit-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: pointer;
+}
