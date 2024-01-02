@@ -176,4 +176,30 @@ app.post('/extract-info', async (req, res) => {
   }
 });
 
+app.put('/edit/:shortLink', async (req, res) => {
+  const { shortLink } = req.params;
+  const { title, tags } = req.body;
+
+  try {
+    // Check if the short link exists in the database
+    const linkResult = await db.query('SELECT * FROM links WHERE short_link = $1 AND is_active = true', [shortLink]);
+
+    if (linkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Short link not found' });
+    }
+
+    // Update title and tags in the database
+    const updateResult = await db.query(
+      'UPDATE links SET title = $1, tags = $2 WHERE short_link = $3 AND is_active = true RETURNING *',
+      [title, tags, shortLink]
+    );
+
+    const updatedLink = updateResult.rows[0];
+    res.json(updatedLink);
+  } catch (error) {
+    console.error('Error updating title and tags:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
