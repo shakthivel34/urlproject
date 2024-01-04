@@ -17,19 +17,7 @@ app.listen(port,()=>{
   console.log(`Server is running on port ${port}`);
 })
 
-// app.get('/save', async (req, res) => {
-//   try {
-    
-//     const result1 = await db.query('SELECT short_link FROM links WHERE is_active = true');
-//     const savedlinks = result1.rows.map(row => row.short_link);
-//     console.log({ savedlinks });
-//     res.json({savedlinks});
-    
-//   } catch (error) {
-//     console.error('Error fetching short links from the database', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
+
 
 
 app.get('/u/:shortLink', async (req, res) => {
@@ -69,76 +57,29 @@ app.post('/url', async (req, res) => {
 });
 
 
-// app.get('/lastsave', async (req, res) => {
-//   try {
-//     const result = await db.query(
-//       'SELECT short_link FROM links WHERE is_active = true ORDER BY id DESC LIMIT 1'
-//     );
 
-//     if (result.rows.length === 0) {
-//       // No matching record found
-//       return res.status(404).json({ error: 'No short links found' });
-//     }
-
-//     const lastSavedLink = result.rows[0].short_link;
-//     console.log({ lastSavedLink });
-//     res.json({ lastSavedLink });
-//   } catch (error) {
-//     console.error('Error executing query:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
-
-
-// app.post('/update', async (req, res) => {
-//   try {
-//     const { link } = req.body;
-//     await db.query('UPDATE links SET Save =true WHERE link = $1', [link]);
-//     res.json({ save: true });
-//   } catch (error) {
-//     console.error('Error updating isSaved status:', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 
 app.get('/saved', async (req, res) => {
   try {
-    const result = await db.query('SELECT short_link, link, tags, title, description FROM links WHERE is_active = TRUE');
+    const result = await db.query('SELECT short_link, link, tags, title, description, is_active FROM links');
     
-    const savedLinks = result.rows.map(({ short_link, link, tags, title, description }) => ({
+    const allLinks = result.rows.map(({ short_link, link, tags, title, description, is_active }) => ({
       short_link,
       link,
       tags,
       title,
       description,
+      is_active,
     }));
 
-    res.json({ savedLinks });
+    res.json({ allLinks });
   } catch (error) {
-    console.error('Error fetching saved links:', error);
+    console.error('Error fetching links:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
 
-// app.post('/name', async (req, res) => {
-//   const { name } = req.body;
-
-//   console.log('Received data:', { name });
-
-//   try {
-//     const result = await db.query(
-//       'INSERT INTO links (name, save) VALUES ($1, true) RETURNING *',
-//       [name]
-//     );
-
-//     console.log('Inserted into database:', result.rows[0]);
-//     res.json(result.rows[0]);
-//   } catch (error) {
-//     console.error('Error storing name in the database', error);
-//     res.status(500).json({ error: 'Internal Server Error' });
-//   }
-// });
 app.post('/check-link-exists', async (req, res) => {
   const { link } = req.body;
 
@@ -202,4 +143,52 @@ app.put('/edit/:shortLink', async (req, res) => {
   }
 });
 
+app.put('/deactivate/:shortLink', async (req, res) => {
+  const { shortLink } = req.params;
 
+  try {
+    // Check if the short link exists in the database
+    const linkResult = await db.query('SELECT * FROM links WHERE short_link = $1', [shortLink]);
+
+    if (linkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Short link not found' });
+    }
+
+    // Update is_active to false in the database
+    const updateResult = await db.query(
+      'UPDATE links SET is_active = false WHERE short_link = $1 RETURNING *',
+      [shortLink]
+    );
+
+    const updatedLink = updateResult.rows[0];
+    res.json(updatedLink);
+  } catch (error) {
+    console.error('Error updating is_active status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+// Add this route after your existing routes
+app.put('/activate/:shortLink', async (req, res) => {
+  const { shortLink } = req.params;
+
+  try {
+    // Check if the short link exists in the database
+    const linkResult = await db.query('SELECT * FROM links WHERE short_link = $1', [shortLink]);
+
+    if (linkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Short link not found' });
+    }
+
+    // Update is_active to true in the database
+    const updateResult = await db.query(
+      'UPDATE links SET is_active = true WHERE short_link = $1 RETURNING *',
+      [shortLink]
+    );
+
+    const updatedLink = updateResult.rows[0];
+    res.json(updatedLink);
+  } catch (error) {
+    console.error('Error updating is_active status:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});

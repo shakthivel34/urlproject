@@ -14,7 +14,11 @@ function UserLists() {
     const fetchSavedLinks = async () => {
       try {
         const response = await axios.get("http://localhost:6002/saved");
-        setSavedLinks(response.data.savedLinks || []);
+        const fetchedLinks = response.data.allLinks || [];
+
+        // No need to set the default status when initializing the state
+
+        setSavedLinks(fetchedLinks);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching saved links:", error);
@@ -67,6 +71,38 @@ function UserLists() {
     }
   };
 
+  const disableLink = async (shortLink) => {
+    try {
+      // Call the API to deactivate the link
+      await axios.put(`http://localhost:6002/deactivate/${shortLink}`);
+
+      // Update local state to mark the link as inactive
+      setSavedLinks((prevLinks) =>
+        prevLinks.map((link) =>
+          link.short_link === shortLink ? { ...link, is_active: false } : link
+        )
+      );
+    } catch (error) {
+      console.error("Error disabling link:", error);
+    }
+  };
+
+  const enableLink = async (shortLink) => {
+    try {
+      // Call the API to activate the link
+      await axios.put(`http://localhost:6002/activate/${shortLink}`);
+
+      // Update local state to mark the link as active
+      setSavedLinks((prevLinks) =>
+        prevLinks.map((link) =>
+          link.short_link === shortLink ? { ...link, is_active: true } : link
+        )
+      );
+    } catch (error) {
+      console.error("Error enabling link:", error);
+    }
+  };
+
   return (
     <div className="list">
       <h2>Saved Links</h2>
@@ -75,8 +111,8 @@ function UserLists() {
         <p>Loading...</p>
       ) : (
         <div className="bookmark-list">
-          {currentItems.map(({ short_link, link, tags, title, description }) => (
-            <div key={short_link} className="bookmark-card">
+          {currentItems.map(({ short_link, link, tags, title, description, is_active }) => (
+            <div key={short_link} className={`bookmark-card ${is_active ? '' : 'fade'}`}>
               <div className="bookmark-header">
                 {editMode.shortLink === short_link && editMode.title ? (
                   <input
@@ -108,6 +144,8 @@ function UserLists() {
                   ) : (
                     <>
                       <strong>Tags:</strong> {tags}
+                      <br />
+                      <strong>Status:</strong> {is_active ? 'Active' : 'Inactive'}
                     </>
                   )}
                 </div>
@@ -121,6 +159,13 @@ function UserLists() {
                   <strong>Original Link:</strong>{" "}
                   <input type="text" value={link} readOnly />
                 </div>
+                <div className="enable-disable-buttons">
+                     {is_active ? (
+                     <button className="disable" onClick={() => disableLink(short_link)}>Disable</button>
+                                                                                              ) : (
+                      <button className="enable" onClick={() => enableLink(short_link)}>Enable</button>
+                              )}
+                 </div>
               </div>
             </div>
           ))}

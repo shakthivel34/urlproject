@@ -93,3 +93,28 @@
   font-size: 12px;
   cursor: pointer;
 }
+.enable-disable-buttons {
+  display: flex;
+  justify-content: center; /* Center align the content horizontally */
+  margin-top: 10px; /* Add margin for spacing */
+}
+.enable-disable-buttons button {
+  margin: 0 5px; /* Add some spacing between buttons */
+  padding: 8px 16px; /* Add padding for a better appearance */
+  cursor: pointer;
+}
+
+.enable-disable-buttons button.disable {
+  background-color: rgb(222, 95, 95);
+  color: white; /* Text color */
+}
+
+.enable-disable-buttons button.enable {
+  background-color: rgb(123, 193, 123);
+  color: white; /* Text color */
+}
+
+.fade {
+  opacity: 0.5; /* Adjust the opacity as needed */
+  transition: opacity 0.3s ease-in-out; /* Add a smooth transition effect */
+}
