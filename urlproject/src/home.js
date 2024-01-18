@@ -28,17 +28,16 @@ function Home() {
         return;
       }
 
-      // Extract information from the link
       const extractInfoResponse = await axios.post("http://localhost:6002/extract-info", {
         link: originalUrl,
       });
 
-      // Update state with extracted title and description
+      
       setTitle(extractInfoResponse.data.title || "");
       setDescription(extractInfoResponse.data.description || "");
     } catch (error) {
       console.error("Error fetching URL info:", error);
-      // Handle error in a way that makes sense for your application
+   
     }
   };
   const handleTitleChange = (event) => {
@@ -59,7 +58,7 @@ function Home() {
         return;
       }
   
-      // Check if the link already exists in the database
+      
       const linkExistsResponse = await axios.post("http://localhost:6002/check-link-exists", {
         link: originalUrl,
       });
@@ -70,14 +69,14 @@ function Home() {
         );
   
         if (!confirmSubmit) {
-          // User chose not to submit the link
+         
           return;
         }
       }
      
       
   
-      // Generate short URL
+     
       const generatedShortUrl = shortid.generate({
         length: 10,
         characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -86,7 +85,7 @@ function Home() {
       const fullShortUrl = `http://localhost:6002/u/${truncatedShortUrl}`;
       setShortUrl(fullShortUrl);
   
-      // Post data to server
+     
       await axios.post("http://localhost:6002/url", {
         link: originalUrl,
         short_link: truncatedShortUrl,
@@ -97,7 +96,7 @@ function Home() {
       navigate("/users");
     } catch (error) {
       console.error("Error storing URL:", error);
-      // Handle error in a way that makes sense for your application
+      
     }
   };
   
@@ -120,7 +119,7 @@ function Home() {
       </h2>
 
       <div>
-        <h2 className="texts">Simplify Sharing with Short URLs by using our URL Shortener</h2>
+        <h2 className="texts">Trim the excess and amplify the essence of links by using our URL Shortner</h2>
       </div>
 
       <div className="url">

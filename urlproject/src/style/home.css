@@ -1,6 +1,6 @@
 .slogan {
     text-align: center;
-    padding-top: 50px;
+    padding-top: 10px;
     font-size: 60px;
 }
 
@@ -14,9 +14,25 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+
+.titlebox{
+    margin-left: 10px;
+    text-decoration: underline;
+    font-weight: bold;
+    padding-top: 10px;
+    width: 250px;
+
+}
+.tagsbox{
+    margin-left: 10px;
+    text-decoration: underline;
+    font-weight: bold;
+    padding-top: 10px;
+    width: 300px;
+
+}
 .urlbox,
-.titlebox,
-.tagsbox,
+
 .descriptionbox {
     margin-left: 10px;
     text-decoration: underline;
@@ -34,18 +50,44 @@
     font-weight: bold;
 }
 
-.url,
-.title,
-.tags,
+
+.title{
+    padding-top: 30px;
+    text-align: center; 
+    padding-right: 100px;
+}
+.tags{
+    text-align: center;
+    padding-top: 30px;
+    padding-right: 50px;
+
+}
+
+.url{
+    text-align: center;
+    padding-top: 10px;
+}
+
 .description {
     text-align: center;
     padding-top: 30px;
+    padding-right: 45px;
 }
 
-.button,
-.shortbutton,
-.savebutton,
-.usersbutton {
+.button{
+    background-color: #4CAF50;
+    color: white;
+    padding-top: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px;
+    padding-bottom: 5px;
+
+}
+.shortbutton{
     background-color: #4CAF50;
     color: white;
     padding-top: 10px;
@@ -57,20 +99,55 @@
     margin-left: 10px;
     padding-bottom: 5px;
 }
+.savebutton{
+    background-color: #4CAF50;
+    color: white;
+    padding-top: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px;
+    padding-bottom: 5px;
+}
+.usersbutton {
+    background-color: #1133ba;
+    color: white;
+    padding-top: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px;
+    padding-bottom: 5px;
+}
 
-.button:hover,
-.shortbutton:hover,
-.savebutton:hover,
+.button:hover{
+    background-color: #45a049; 
+}
+.shortbutton:hover{
+    background-color: #45a049; 
+}
+.savebutton:hover{
+    background-color: #45a049; 
+}
 .usersbutton:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #1571b7; 
 }
 
 .submit {
     text-align: center;
     font-size: 15px;
+    
 }
 
-.shorturl,
+.shorturl{
+    text-align: center;
+    padding-top: 20px;
+    padding-right: 152px;
+}
 .userslist {
     text-align: center;
     padding-top: 30px;

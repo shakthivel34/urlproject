@@ -6,19 +6,19 @@ function UserLists() {
   const [savedLinks, setSavedLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(12); // Adjust the number of items per page as needed
+  const [itemsPerPage] = useState(12);
   const [editMode, setEditMode] = useState({ shortLink: null, title: false, tags: false });
   const [editedValues, setEditedValues] = useState({ shortLink: null, title: "", tags: "" });
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredLinks, setFilteredLinks] = useState(savedLinks);
 
   useEffect(() => {
     const fetchSavedLinks = async () => {
       try {
         const response = await axios.get("http://localhost:6002/saved");
         const fetchedLinks = response.data.allLinks || [];
-
-        // No need to set the default status when initializing the state
-
         setSavedLinks(fetchedLinks);
+        setFilteredLinks(fetchedLinks);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching saved links:", error);
@@ -29,27 +29,22 @@ function UserLists() {
     fetchSavedLinks();
   }, []);
 
-  // Calculate indexes for the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = savedLinks.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredLinks.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Toggle edit mode for a specific short link
   const toggleEditMode = (shortLink) => {
     setEditMode({ ...editMode, shortLink, title: true, tags: true });
-    const linkToEdit = savedLinks.find((link) => link.short_link === shortLink);
+    const linkToEdit = filteredLinks.find((link) => link.short_link === shortLink);
     setEditedValues({ ...editedValues, shortLink, title: linkToEdit.title, tags: linkToEdit.tags });
   };
 
-  // Handle changes to edited values
   const handleEditChange = (field, value) => {
     setEditedValues({ ...editedValues, [field]: value });
   };
 
-  // Save changes and exit edit mode
   const saveChanges = async (shortLink) => {
     try {
       await axios.put(`http://localhost:6002/edit/${shortLink}`, {
@@ -57,14 +52,12 @@ function UserLists() {
         tags: editedValues.tags,
       });
 
-      // Update local state with the edited values
-      setSavedLinks((prevLinks) =>
+      setFilteredLinks((prevLinks) =>
         prevLinks.map((link) =>
           link.short_link === shortLink ? { ...link, title: editedValues.title, tags: editedValues.tags } : link
         )
       );
 
-      // Exit edit mode
       setEditMode({ ...editMode, shortLink: null, title: false, tags: false });
     } catch (error) {
       console.error("Error saving changes:", error);
@@ -73,11 +66,9 @@ function UserLists() {
 
   const disableLink = async (shortLink) => {
     try {
-      // Call the API to deactivate the link
       await axios.put(`http://localhost:6002/deactivate/${shortLink}`);
 
-      // Update local state to mark the link as inactive
-      setSavedLinks((prevLinks) =>
+      setFilteredLinks((prevLinks) =>
         prevLinks.map((link) =>
           link.short_link === shortLink ? { ...link, is_active: false } : link
         )
@@ -89,11 +80,9 @@ function UserLists() {
 
   const enableLink = async (shortLink) => {
     try {
-      // Call the API to activate the link
       await axios.put(`http://localhost:6002/activate/${shortLink}`);
 
-      // Update local state to mark the link as active
-      setSavedLinks((prevLinks) =>
+      setFilteredLinks((prevLinks) =>
         prevLinks.map((link) =>
           link.short_link === shortLink ? { ...link, is_active: true } : link
         )
@@ -103,9 +92,31 @@ function UserLists() {
     }
   };
 
+  const handleSearchInputChange = (e) => {
+    const input = e.target.value.toLowerCase();
+    setSearchInput(input);
+
+    const filtered = savedLinks.filter(
+      ({ title, tags }) =>
+        title.toLowerCase().includes(input) || tags.toLowerCase().includes(input)
+    );
+
+    setFilteredLinks(filtered);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="list">
       <h2>Saved Links</h2>
+
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Search by title or tags"
+          value={searchInput}
+          onChange={handleSearchInputChange}
+        />
+      </div>
 
       {loading ? (
         <p>Loading...</p>
@@ -160,21 +171,20 @@ function UserLists() {
                   <input type="text" value={link} readOnly />
                 </div>
                 <div className="enable-disable-buttons">
-                     {is_active ? (
-                     <button className="disable" onClick={() => disableLink(short_link)}>Disable</button>
-                                                                                              ) : (
-                      <button className="enable" onClick={() => enableLink(short_link)}>Enable</button>
-                              )}
-                 </div>
+                  {is_active ? (
+                    <button className="disable" onClick={() => disableLink(short_link)}>Disable</button>
+                  ) : (
+                    <button className="enable" onClick={() => enableLink(short_link)}>Enable</button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Pagination */}
       <div className="pagination">
-        {Array.from({ length: Math.ceil(savedLinks.length / itemsPerPage) }).map((_, index) => (
+        {Array.from({ length: Math.ceil(filteredLinks.length / itemsPerPage) }).map((_, index) => (
           <button
             key={index}
             onClick={() => paginate(index + 1)}
@@ -184,6 +194,8 @@ function UserLists() {
           </button>
         ))}
       </div>
+
+      
     </div>
   );
 }
